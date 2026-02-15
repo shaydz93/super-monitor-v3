@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Login - ShaydZ Super Monitor{% endblock %}
+
+{% block content %}
+<header>
+    <h1>🔐 S h a y d Z Super Monitor</h1>
+</header>
+
+<div class="card" style="max-width: 400px; margin: 50px auto;">
+    <h2>Login</h2>
+    <form method="POST" action="/login">
+        <div>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required autofocus>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+    <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.7;">
+        Default: admin / admin
+    </p>
+</div>
+{% endblock %}

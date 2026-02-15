@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - ShaydZ Super Monitor{% endblock %}
+
+{% block content %}
+<header>
+    <h1>🔥 S h a y d Z Super Monitor</h1>
+    <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/downloads">Downloads</a>
+        <a href="/settings">Settings</a>
+        <a href="/logout">Logout</a>
+    </nav>
+</header>
+
+{% if has_anomaly %}
+<div class="alert alert-danger">
+    <strong>⚠️ Anomalies Detected!</strong>
+    <ul style="margin-top: 10px;">
+        {% for anomaly in anomalies %}
+        <li>{{ anomaly }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% else %}
+<div class="alert alert-success">
+    <strong>✅ {{ anomalies[0] }}</strong>
+</div>
+{% endif %}
+
+<div class="card">
+    <h2>System Status</h2>
+    <div class="status-grid">
+        {% for line in status %}
+        <div class="status-item">
+            <div class="status-value">{{ line }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card">
+    <h2>Metrics History</h2>
+    <canvas id="metricsChart" height="100"></canvas>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const graphData = {{ graphs|safe }};
+    
+    const ctx = document.getElementById('metricsChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array.from({length: graphData.cpu.length}, (_, i) => i),
+            datasets: [
+                {
+                    label: 'CPU %',
+                    data: graphData.cpu,
+                    borderColor: '#e94560',
+                    backgroundColor: 'rgba(233, 69, 96, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'RAM %',
+                    data: graphData.ram,
+                    borderColor: '#00ff88',
+                    backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Disk %',
+                    data: graphData.disk,
+                    borderColor: '#ffd700',
+                    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Temp °C',
+                    data: graphData.temp,
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#e94560'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    grid: {
+                        color: 'rgba(233, 69, 96, 0.1)'
+                    },
+                    ticks: {
+                        color: '#e94560'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(233, 69, 96, 0.1)'
+                    },
+                    ticks: {
+                        color: '#e94560'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
